@@ -50,9 +50,6 @@ function App() {
         search.trim() && results.length > 0 && (<ul>
           {results.map(r => <li key={r.id}>
             <h3>{r.name}</h3>
-            <p><strong>{r.brand}</strong></p>
-            <img src={r.image} alt={r.name} />
-            <p>{r.description}</p>
           </li>)}
         </ul>)}
 
