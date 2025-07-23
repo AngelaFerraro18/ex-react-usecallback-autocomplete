@@ -13,6 +13,7 @@ function App() {
 
   const [search, setSearch] = useState('');
   const [results, setResults] = useState([]);
+  const [selectedProduct, setSelectedProduct] = useState(null);
 
   async function productsFetch(query) {
     try {
@@ -28,7 +29,20 @@ function App() {
 
   const debouncedFetch = useCallback(debounce(productsFetch, 500), []);
 
-  useEffect(() => { debouncedFetch(search) }, [search])
+  useEffect(() => { debouncedFetch(search) }, [search]);
+
+  async function fetchProductDetails(id) {
+
+    try {
+      const response = await fetch(`http://localhost:3333/products/${id}`);
+      const data = await response.json();
+      setSelectedProduct(data);
+      setSearch('');
+      setResults([]);
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   return (
     <>
@@ -45,13 +59,17 @@ function App() {
           debouncedFetch(e.target.value);
         }} />
 
-      {
+      {search.trim() && results.length > 0 && (<ul>
+        {results.map(r => <li key={r.id} onClick={() => fetchProductDetails(r.id)}>
+          <h3>{r.name}</h3>
+        </li>)}
+      </ul>)}
 
-        search.trim() && results.length > 0 && (<ul>
-          {results.map(r => <li key={r.id}>
-            <h3>{r.name}</h3>
-          </li>)}
-        </ul>)}
+      {selectedProduct && (<div>
+        <h2>{selectedProduct.name}</h2>
+        <img src={selectedProduct.image} alt={selectedProduct.name} />
+        <p>{selectedProduct.description}</p>
+      </div>)}
 
 
     </>
