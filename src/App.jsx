@@ -26,9 +26,9 @@ function App() {
 
   }
 
-  useEffect(() => { productsFetch(search) }, [])
+  const debouncedFetch = useCallback(debounce(productsFetch, 500), []);
 
-  const debouncedFetch = useCallback(debounce((query) => { productsFetch(query); }, 500), []);
+  useEffect(() => { debouncedFetch(search) }, [search])
 
   return (
     <>
